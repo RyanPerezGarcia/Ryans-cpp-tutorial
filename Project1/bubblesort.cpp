@@ -8,7 +8,7 @@ int main()
 	vector <double> list{ -1, 5, 7, 4, 2, -10, 8, 6, 2, -10 };
 	for (int i = 0; i < 90; i++)
 	{
-		list.push_back(rand());
+		list.push_back(rand()%100-1);
 	}
 	cout << "Here is the unsorted list: \n";
 	for (int i = 0; i <100; i++)
