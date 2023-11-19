@@ -32,7 +32,7 @@ int guessing()
 	int maxtries, minnum, maxnum;
 	cout << "enter the amount of tries you want: ";
 	cin >> maxtries;
-	if (cin.fail())
+	while (cin.fail())
 	{
 		cin.clear();
 		cin.ignore();
@@ -42,7 +42,7 @@ int guessing()
 	cout << "enter the range of numbers you want\n";
 	cout << "minimum number: ";
 	cin >> minnum;
-	if (cin.fail())
+	while (cin.fail())
 	{
 		cin.clear();
 		cin.ignore();
@@ -51,7 +51,7 @@ int guessing()
 	}
 	cout << "maximum number: ";
 	cin >> maxnum;
-	if (cin.fail())
+	while (cin.fail())
 	{
 		cin.clear();
 		cin.ignore();
@@ -60,10 +60,10 @@ int guessing()
 	}
 	int tries = 0;
 	int randnum = getrandnum(minnum, maxnum);
-	cout << randnum << endl;
 	cout << "welcome you have " << maxtries << " guesses\n";
 	while (tries < maxtries)
 	{
+		cout << "enter your guess: ";
 		int guess;
 		cin >> guess;
 		if (cin.fail())
@@ -90,6 +90,8 @@ int guessing()
 			break;
 		}
 		tries++;
+		if(maxtries-tries > 0)
+		cout << "you have " << maxtries - tries << " guesses left\n";
 	}
 	if (tries == maxtries)
 	{
