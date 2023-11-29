@@ -1,11 +1,13 @@
 #include<iostream>
 #include<cstdlib>
-#include<cctype>
 #include <string>
+#include<sstream>
 using namespace std;
-bool playgame ();
+bool playgame();		
 int getrandnum(int minnum, int maxnum);
 int guessing();
+int getIntegerInput(string promptMessage, string errorMessage);
+int getPositiveIntegerInput(string promptMessage, string errorMessage);
 int main()
 {
 	srand(time(0));
@@ -16,8 +18,6 @@ int main()
 		if (!playgame()) {
 			break;
 		}
-
-	
 	}
 	cout << "thanks for playing";
 }
@@ -29,84 +29,67 @@ int getrandnum(int minnum, int maxnum)
 
 int guessing()
 {
-	int maxtries, minnum, maxnum;
-	cout << "enter the amount of tries you want: ";
-	cin >> maxtries;
-	while (cin.fail())
-	{
-		cin.clear();
-		cin.ignore();
-		cout << "invalid input\nenter the amount of tries you want: ";
-		cin >> maxtries;
-	}
-	cout << "enter the range of numbers you want\n";
-	cout << "minimum number: ";
-	cin >> minnum;
-	while (cin.fail())
-	{
-		cin.clear();
-		cin.ignore();
-		cout << "invalid input\nminimum number: ";
-		cin >> minnum;
-	}
-	cout << "maximum number: ";
-	cin >> maxnum;
-	while (cin.fail())
-	{
-		cin.clear();
-		cin.ignore();
-		cout << "invalid input\nmaximum number: ";
-		cin >> maxnum;
-	}
+	int maxtries = getPositiveIntegerInput("Enter the amount of tries you want: ", "Invalid input. Please enter a positive integer.\n");
+	int minnum = getIntegerInput("Minimum number: ", "Invalid input. Please enter an integer.\n");
+	int maxnum = getIntegerInput("Maximum number: ", "Invalid input. Please enter an integer.\n");
+
 	int tries = 0;
 	int randnum = getrandnum(minnum, maxnum);
 	cout << "welcome you have " << maxtries << " guesses\n";
 	while (tries < maxtries)
 	{
-		cout << "enter your guess: ";
-		int guess;
-		cin >> guess;
-		if (cin.fail())
+		while (tries < maxtries)
 		{
-				cin.clear();
-				cin.ignore();
+			cout << "Enter your guess: ";
+			string input;
+			getline(cin, input);
+			stringstream ss(input);
+			int guess;
+			if (ss >> guess && ss.eof())
+			{  // Check if conversion succeeded and input ended
+				if (tries !=maxtries&&guess < randnum && guess >= minnum)
+				{
+					cout << "Too low!\n";
+				}
+				else if (tries!=maxtries &&guess > randnum && guess <= maxnum)
+				{
+					cout << "Too high\n";
+				}
+				else if (guess < minnum || guess > maxnum)
+				{
+					cout << "The number you entered is not within the given range\n";
+					tries--;
+				}
+				else if (guess == randnum)
+				{
+					cout << "You got it!\n";
+					cout << "enter 'q' to quit or 'p' to play\n";
+				
+					return true;
+				}
+			}
+			else {
+				cout << "Invalid input. Please enter an integer.\n";
+				tries--;
+			}
+			tries++;
+			if (maxtries - tries > 0)
+				cout << "You have " << maxtries - tries << " guesses left\n";
 		}
-	    if (guess < randnum && guess >= minnum )
-	    {
-		    cout << "too low!\n";
-	    }
-	    else if (guess > randnum && guess <= maxnum)
-	    {
-	    	cout << "too high\n";
-	    }
-		else if (guess < minnum || guess > maxnum)
-		{
-			cout << "the number you entered is not within the given range or the input was invalid\n";
-			tries--;
-		}	
-		else if (guess == randnum)
-		{
-			cout << "you got it!\n";
-			break;
-		}
-		tries++;
-		if(maxtries-tries > 0)
-		cout << "you have " << maxtries - tries << " guesses left\n";
 	}
 	if (tries == maxtries)
 	{
 		cout << "you ran out of guesses\n";
 		cout << "The number was: " << randnum << endl;
+		cout << "enter 'q' to quit or 'p' to play\n";
 	}
-	cout << "enter 'q' to quit or 'p' to play\n";
+
 	return true;
 }
 
 
 bool playgame()
 {
-	
-
 	string input;
 	getline(cin, input);
 	if (input == "q")
@@ -116,7 +99,11 @@ bool playgame()
 	if (input == "p")
 	{
 		guessing();
-		cin.ignore();
+		if (cin.peek() == '\n')  // Check if there's a newline character left in the input stream
+		{
+			cin.ignore();
+		}
+
 		return true;
 	}
 	else
@@ -125,5 +112,44 @@ bool playgame()
 		cout << "enter 'q' to quit or 'p' to play\n";
 		return true;
 	}
+}
 
+int getIntegerInput(string promptMessage, string errorMessage) {
+	int num;
+	string input;
+	while (true) {
+		cout << promptMessage;
+		getline(cin, input);
+		stringstream ss(input);
+		if (ss >> num && ss.eof())
+		{  // Check if conversion succeeded and input ended
+				break;
+		}
+		else {
+			cout << errorMessage;
+		}
+	}
+	return num;
+}
+int getPositiveIntegerInput(string promptMessage, string errorMessage)
+{
+	int num;
+	string input;
+	while (true) {
+		cout << promptMessage;
+		getline(cin, input);
+		stringstream ss(input);
+		if (ss >> num && ss.eof())
+		{  
+			if(num>0)
+				break;
+			else
+				cout << errorMessage;
+
+		}
+		else {
+			cout << errorMessage;
+		}
+	}
+	return num;
 }
